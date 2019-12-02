@@ -27,7 +27,7 @@ SRV_IP=$(hostname -I | cut -d' ' -f1)
 cat > /etc/yum.repos.d/mongodb-org.repo <<_EOF_
 [mongodb-org-4.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/4.0/x86_64/
 gpgcheck=1
 enabled=1
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
