@@ -75,4 +75,4 @@ firewall-cmd --reload
 
 echo "Please login to server after several minutes!"
 echo "Server address: http://$SRV_IP:9000"
-echo "User: admin, pass: p@ssw0rd PLEASE CHANGEIT!"
+echo "User: admin, pass: p@ssw0rd PLEASE CHANGE IT!"
