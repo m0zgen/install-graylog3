@@ -73,4 +73,6 @@ _EOF_
 firewall-cmd --permanent --add-port=9000/tcp
 firewall-cmd --reload
 
-echo "http://$SRV_IP:9000"
+echo "Please login to server after several minutes!"
+echo "Server address: http://$SRV_IP:9000"
+echo "User: admin, pass: p@ssw0rd PLEASE CHANGEIT!"
