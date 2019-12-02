@@ -8,6 +8,13 @@
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 
+#
+# Base installation software
+curl -sfL https://raw.githubusercontent.com/m0zgen/run-cent/master/run.sh | sh
+
+# GrayLog requested
+yum install java-1.8.0-openjdk-headless.x86_64 pwgen -y
+
 # Vars
 # -------------------------------------------------------------------------------------------\
 G_CONF="/etc/graylog/server/server.conf"
@@ -15,12 +22,6 @@ PWD_SECRET=$(pwgen -N 1 -s 96)
 ADMIN_PWD=$(echo -n p@ssw0rd | sha256sum | awk $'{print $1}')
 SRV_NAME=$(hostname)
 SRV_IP=$(hostname -I | cut -d' ' -f1)
-
-# Base installation software
-curl -sfL https://raw.githubusercontent.com/m0zgen/run-cent/master/run.sh | sh
-
-# GrayLog requested
-yum install java-1.8.0-openjdk-headless.x86_64 pwgen -y
 
 # Install repos
 cat > /etc/yum.repos.d/mongodb-org.repo <<_EOF_
