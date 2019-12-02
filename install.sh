@@ -13,6 +13,8 @@ SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 G_CONF="/etc/graylog/server/server.conf"
 PWD_SECRET=$(pwgen -N 1 -s 96)
 ADMIN_PWD=$(echo -n p@ssw0rd | sha256sum | awk $'{print $1}')
+SRV_NAME=$(hostname)
+SRV_IP=$(hostname -I | cut -d' ' -f1)
 
 # Base installation software
 curl -sfL https://raw.githubusercontent.com/m0zgen/run-cent/master/run.sh | sh
@@ -57,6 +59,7 @@ echo "root_password_sha2 = $ADMIN_PWD" >> /etc/graylog/server/server.conf
 
 cat >> /etc/graylog/server/server.conf <<_EOF_
 # additional configs
+http_bind_address = ${SRV_IP}:9000
 root_email = root@localhost
 root_timezone = UTC
 #
@@ -66,4 +69,7 @@ elasticsearch_shards = 1
 elasticsearch_replicas = 0
 _EOF_
 
+firewall-cmd --permanent --add-port=9000/tcp
+firewall-cmd --reload
 
+echo "http://$SRV_IP:9000"
