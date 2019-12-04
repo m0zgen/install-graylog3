@@ -19,7 +19,8 @@ yum install java-1.8.0-openjdk-headless.x86_64 pwgen yum-utils -y
 # -------------------------------------------------------------------------------------------\
 G_CONF="/etc/graylog/server/server.conf"
 PWD_SECRET=$(pwgen -N 1 -s 96)
-ADMIN_PWD=$(echo -n p@ssw0rd | sha256sum | awk $'{print $1}')
+ADMN_LOGIN_PWD=$(pwgen -n 8 -N 1)
+ADMIN_PWD=$(echo -n $ADMN_LOGIN_PWD | sha256sum | awk $'{print $1}')
 SRV_NAME=$(hostname)
 SRV_IP=$(hostname -I | cut -d' ' -f1)
 
@@ -116,6 +117,8 @@ _EOF_
 systemctl enable graylog-server && systemctl restart graylog-server
 
 # Setup nginx
+mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/gl.conf
+
 cat > /etc/nginx/conf.d/gl.conf << _EOF_
 server
 {
@@ -182,8 +185,11 @@ bash self-cert-gen/sgen-conf.sh
 mkdir /etc/nginx/ssl
 cp self-cert-gen/self-request.csr self-cert-gen/self-key.pem /etc/nginx/ssl/
 
+systemctl enable nginx && systemctl restart nginx
+
 setfw
 
 echo "Please login to server after several minutes!"
-echo "Server address: http://$SRV_IP"
-echo "User: admin, pass: p@ssw0rd PLEASE CHANGE IT!"
+echo "Server address: https://$SRV_IP"
+echo "User: admin, pass: $ADMN_LOGIN_PWD"
+echo "User: admin, pass: $ADMN_LOGIN_PWD" >> $SCRIPT_PATH/config.txt
