@@ -101,7 +101,7 @@ echo "root_password_sha2 = $ADMIN_PWD" >> /etc/graylog/server/server.conf
 
 cat >> /etc/graylog/server/server.conf <<_EOF_
 # additional configs
-http_bind_address = ${SRV_IP}:9000
+http_bind_address = 127.0.0.1:9000
 root_email = root@localhost
 root_timezone = UTC
 #
