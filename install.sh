@@ -13,7 +13,7 @@ SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 curl -sfL https://raw.githubusercontent.com/m0zgen/run-cent/master/run.sh | sh
 
 # GrayLog requested
-yum install java-1.8.0-openjdk-headless.x86_64 pwgen yum-utils policycoreutils-python -y
+yum install java-1.8.0-openjdk-headless.x86_64 pwgen yum-utils policycoreutils-python lsof -y
 
 # Vars
 # -------------------------------------------------------------------------------------------\
@@ -37,6 +37,10 @@ function setfw() {
 	firewall-cmd --permanent --add-service=http
 	firewall-cmd --permanent --add-service=https
 	firewall-cmd --reload
+}
+
+function enable() {
+	systemctl enable $1 && systemctl start $1
 }
 
 # Install repos
@@ -93,8 +97,9 @@ echo "cluster.name: graylog" >> /etc/elasticsearch/elasticsearch.yml
 seset
 
 systemctl daemon-reload
-systemctl enable mongod.service && systemctl start mongod.service
-systemctl enable elasticsearch.service && systemctl start elasticsearch.service
+
+enable mongod.service
+enable elasticsearch.service
 
 echo -e "\n# Custom settings\npassword_secret = $PWD_SECRET"  >> /etc/graylog/server/server.conf
 echo "root_password_sha2 = $ADMIN_PWD" >> /etc/graylog/server/server.conf
@@ -114,7 +119,7 @@ rest_listen_uri = http://127.0.0.1:9000/graylog/api/
 web_listen_uri = http://127.0.0.1:9000/graylog
 _EOF_
 
-systemctl enable graylog-server && systemctl restart graylog-server
+enable graylog-server
 
 # Setup nginx
 mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/gl.conf
@@ -185,11 +190,32 @@ bash self-cert-gen/sgen-conf.sh
 mkdir /etc/nginx/ssl
 cp self-cert-gen/self-request.csr self-cert-gen/self-key.pem /etc/nginx/ssl/
 
-systemctl enable nginx && systemctl restart nginx
+enable nginx
 
 setfw
 
-echo "Please login to server after several minutes!"
-echo "Server address: https://$SRV_IP"
-echo "User: admin, pass: $ADMN_LOGIN_PWD"
-echo "User: admin, pass: $ADMN_LOGIN_PWD" >> $SCRIPT_PATH/config.txt
+# while wait running GrayLog server
+secs=$((5 * 60))
+while [ $secs -gt 0 ]; do
+
+if lsof -Pi :9000 -sTCP:LISTEN -t >/dev/null ; then
+	secs=0
+	echo "GrayLog is running!"
+
+	echo "Please login to server after several minutes!"
+	echo "Server address: https://$SRV_IP"
+	echo "User: admin, pass: $ADMN_LOGIN_PWD"
+	echo "User: admin, pass: $ADMN_LOGIN_PWD" >> $SCRIPT_PATH/config.txt
+
+else
+   echo -ne "GrayLog is starting process... Please wait in seconds: $secs\033[0K\r"
+   sleep 1
+   : $((secs--))
+
+   if (( $secs == 1 )); then
+   	  secs=0	
+      echo "GrayLog does not started. Please try run it manually."
+   fi
+fi
+
+done
