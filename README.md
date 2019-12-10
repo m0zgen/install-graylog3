@@ -7,7 +7,7 @@ What does this script:
 * Correct configured GrayLog api nginx prixy
 * SELinux configure
 * Admin password generator
-* While whaiting GrayLog running status and show connection mrssage to user
+* While waiting GrayLog running status and show connection message to user
 
 ## Fast run
 ```bash
@@ -17,5 +17,5 @@ yum install git -y && git clone https://github.com/m0zgen/install-graylog3 && cd
 ## Official documentation
 * Official [installing manual](https://docs.graylog.org/en/3.1/pages/installation.html)
 * Nginx [settings for GrayLog](https://docs.graylog.org/en/3.1/pages/configuration/web_interface.html#configuring-webif-nginx)
-* Haow you can [collect messages](https://docs.graylog.org/en/3.1/pages/getting_started/collect.html)
+* How you can [collect messages](https://docs.graylog.org/en/3.1/pages/getting_started/collect.html)
 * Multi-Node [setup](https://docs.graylog.org/en/3.1/pages/configuration/multinode_setup.html)
