@@ -13,7 +13,7 @@ SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 curl -sfL https://raw.githubusercontent.com/m0zgen/run-cent/master/run.sh | sh
 
 # GrayLog requested
-yum install java-1.8.0-openjdk-headless.x86_64 pwgen yum-utils -y
+yum install java-1.8.0-openjdk-headless.x86_64 pwgen yum-utils policycoreutils-python -y
 
 # Vars
 # -------------------------------------------------------------------------------------------\
